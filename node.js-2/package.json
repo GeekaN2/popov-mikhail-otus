@@ -1,0 +1,12 @@
+{
+  "name": "tree",
+  "version": "1.0.0",
+  "description": "show tree",
+  "main": "tree.js",
+  "scripts": {
+    "tree": "node tree.js"
+  },
+  "author": "Mikhail Popov",
+  "license": "ISC",
+  "dependencies": {}
+}
