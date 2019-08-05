@@ -1,17 +1,30 @@
 const http = require('http');
 
-function sendRequests(options){
+
+function sendParallel(options){
   for (let option of options){
     http.get(option, (res) => {
       res.on('data', (data) => {
         console.log(data.toString());
-      })
+      });
     }).on("error", (error) => {
       console.log("Error: " + error.message);
     });    
   }
 }
 
+function sendSeries(options, counter = 0) {
+  if (counter >= options.length) return;
+  http.get(options[counter], (res) => {
+    res.on('data', (data) => {
+      console.log(data.toString());
+    });
+    counter++;
+    res.on('end', () => sendSeries(options, counter));
+  }).on("error", (error) => {
+    console.log("Error: " + error.message);
+  });    
+}
 
 //example
 
@@ -35,4 +48,5 @@ const option2 = {
   }
 }
 
-sendRequests([option1, option2]);
+sendSeries([option1, option2]);
+//sendParallel([option1, option2]);
