@@ -1,6 +1,7 @@
 const http = require('http');
 
 
+
 function sendParallel(options){
   for (let option of options){
     http.get(option, (res) => {
@@ -12,6 +13,7 @@ function sendParallel(options){
     });    
   }
 }
+
 
 function sendSeries(options, counter = 0) {
   if (counter >= options.length) return;
@@ -26,27 +28,38 @@ function sendSeries(options, counter = 0) {
   });    
 }
 
-//example
-
-const option1 = {
-  hostname: 'localhost',
-  port: 3000,
-  path: '/',
-  method: 'POST',
-  body: JSON.stringify({
-    foo: "bar"
-  }),
-}
-
-const option2 = {
-  hostname: 'localhost',
-  port: 3000,
-  path: '/',
-  method: 'GET',
-  headers: {
-    //any headers
+function generateOptions(quantity){ //use for tests
+  let options = [];
+  for (let i = 0; i < quantity; i++){
+    options.push({
+      hostname: 'localhost',
+      port: 3000,
+      path: '/',
+      method: 'POST',
+    })
   }
+  return options;
 }
 
-sendSeries([option1, option2]);
-//sendParallel([option1, option2]);
+function main(){
+  let args = process.argv,
+  type = args[2],
+  quantity = parseInt(args[3]);
+  if (type != 'parallel' && type != 'series'){
+    console.log(`3rd argument must be 'parallel' or 'series'`);
+    return;
+  }
+  if (isNaN(quantity)){
+    console.log('4th argument must be a number');
+    return;
+  }
+  if (type == 'parallel')
+    sendParallel(generateOptions(quantity));
+  if (type == 'series')
+    sendSeries(generateOptions(quantity))
+
+  return 'Accepted';
+}
+
+
+main();
